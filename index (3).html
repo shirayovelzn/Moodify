@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOODIFY — Your Mood, Your Music.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#100B1C;--side:#1C1430;--card:#30204C;--ac:#A879FF;--tx:#fff;--t2:#B9ADC9;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:14px/1.4 Inter,system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;overflow:hidden}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none;cursor:pointer}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.ic{width:20px;height:20px;flex:none}
+#app{display:grid;grid-template-columns:240px 1fr;grid-template-rows:1fr 88px;height:100vh}
+aside{background:var(--side);padding:20px 14px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:.5px;padding:4px 10px 22px}
+.logo .ic{width:30px;height:30px;color:var(--ac)}
+.nav{display:flex;align-items:center;gap:14px;padding:11px 14px;border-radius:12px;color:var(--t2);font-weight:600;width:100%;text-align:left;transition:.2s}
+.nav:hover{color:#fff;background:#ffffff0d}
+.nav.on{background:linear-gradient(90deg,#8b5cf6,#A879FF);color:#fff;box-shadow:0 6px 18px #8b5cf655}
+.sp{flex:1}
+.me{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;width:100%;text-align:left}
+.me:hover{background:#ffffff0d}
+main{overflow:auto;padding:0 28px 32px;background:linear-gradient(180deg,#2b1b4b,var(--bg) 340px)}
+.top{position:sticky;top:0;z-index:5;display:flex;gap:14px;align-items:center;padding:18px 0;background:linear-gradient(180deg,#2b1b4bee 60%,transparent)}
+.sb{flex:1;max-width:520px;display:flex;align-items:center;gap:10px;background:#ffffff14;border-radius:99px;padding:0 16px;border:1px solid transparent}
+.sb:focus-within{border-color:var(--ac)}
+.sb input{flex:1;background:none;border:0;outline:0;padding:11px 0}
+.sb input::placeholder{color:var(--t2)}
+.av{border-radius:50%;background:linear-gradient(135deg,#A879FF,#5b2bb8);display:grid;place-items:center;font-weight:700;object-fit:cover;flex:none;overflow:hidden}
+.ib{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--t2);transition:.2s;flex:none}
+.ib:hover{color:#fff;background:#ffffff14;transform:scale(1.08)}
+.ib.lk{color:var(--ac)}
+.hero{position:relative;overflow:hidden;border-radius:24px;padding:38px;min-height:220px;background:radial-gradient(circle at 85% 40%,#6d3fd0,transparent 55%),linear-gradient(120deg,#1c1034,#4a2a8c 70%,#a879ff);box-shadow:0 20px 50px #0008}
+.hero h1{font-size:clamp(26px,4vw,40px);line-height:1.1;font-weight:800;margin-bottom:10px}
+.hero p{color:#e6dcff;margin-bottom:20px}
+.disc{position:absolute;right:-50px;top:-30px;width:300px;height:300px;border-radius:50%;background:repeating-radial-gradient(#0c0718 0 3px,#1d1233 3px 6px);box-shadow:0 0 60px #a879ff66;animation:spin 14s linear infinite}
+.disc:after{content:"";position:absolute;inset:36%;border-radius:50%;background:radial-gradient(#fff 0 8%,#a879ff 9%)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.disc{animation:none}}
+.btn,.pb{display:inline-flex;align-items:center;gap:8px;background:var(--ac);color:#150a2b;font-weight:700;padding:10px 20px;border-radius:99px;transition:.2s}
+.btn:hover,.pb:hover{transform:scale(1.04);box-shadow:0 8px 22px #a879ff55}
+.btn.g{background:#ffffff14;color:#fff}
+.pb{width:56px;height:56px;padding:0;justify-content:center}
+.sec{margin-top:34px}
+.sh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.sh h2{font-size:21px;font-weight:700}
+.sh a{color:var(--t2);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:18px}
+.card{position:relative;background:var(--card);border-radius:var(--r);padding:12px;cursor:pointer;transition:.25s;text-align:left;display:block;width:100%}
+.card:hover{transform:translateY(-5px);background:#3b2860;box-shadow:0 14px 30px #0006}
+.card b{display:block;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card small{color:var(--t2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .fab{position:absolute;right:20px;top:calc(100% - 78px);width:42px;height:42px;opacity:0;transition:.25s;background:var(--ac);color:#150a2b;border-radius:50%;display:grid;place-items:center;box-shadow:0 8px 18px #0008}
+.card:hover .fab{opacity:1}
+.card.rd .cv{border-radius:50%}
+.cv{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;font-size:42px;width:100%;box-shadow:0 6px 16px #0005}
+.cv.sm{width:44px;font-size:20px;border-radius:8px;box-shadow:none}
+.cv.big{width:200px;font-size:80px;border-radius:16px}
+.row{display:grid;grid-template-columns:28px 44px 1.4fr 1fr auto auto auto;gap:12px;align-items:center;padding:8px 12px;border-radius:12px;cursor:pointer;transition:.15s}
+.row:hover{background:#ffffff12}
+.row.on{background:#a879ff26}
+.row.on b{color:var(--ac)}
+.row .n{color:var(--t2);text-align:center}
+.meta b{display:block;font-weight:600}
+.meta a,.t2,.al{color:var(--t2);font-size:13px}
+.dh{display:flex;gap:24px;align-items:flex-end;padding:10px 0 20px;flex-wrap:wrap}
+.dh h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.05;margin:6px 0}
+.dh small{font-weight:600}
+.acts{display:flex;gap:12px;align-items:center;margin:8px 0 16px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{padding:7px 16px;border-radius:99px;background:#ffffff14;font-weight:600;transition:.2s}
+.chip:hover{background:#ffffff26}
+.chip.on{background:var(--ac);color:#150a2b}
+.mood{border-radius:var(--r);padding:18px;min-height:96px;font-weight:700;font-size:17px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;transition:.25s}
+.mood:hover{transform:scale(1.04)}
+.mood span{font-size:30px}
+.empty{color:var(--t2);padding:30px;text-align:center;background:#ffffff0a;border-radius:var(--r)}
+.panel{background:var(--card);border-radius:20px;padding:22px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:10px;margin:18px 0}
+.stats b{display:block;font-size:24px}
+.auth{max-width:880px;margin:30px auto;display:grid;grid-template-columns:1fr 1fr;background:var(--side);border-radius:24px;overflow:hidden;box-shadow:0 24px 60px #000a}
+.auth .art{background:radial-gradient(circle at 50% 35%,#7c4ddb,#1c1034 70%);display:grid;place-content:center;text-align:center;padding:30px;gap:8px}
+.auth .art .ic{width:120px;height:120px;margin:auto;color:#d9c4ff}
+.auth .fm{padding:38px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.fm input,#dlg input.tx{background:#ffffff12;border:1px solid #ffffff1f;border-radius:12px;padding:12px 14px;width:100%;outline:0}
+.fm input:focus,#dlg input.tx:focus{border-color:var(--ac)}
+.err{color:#ff8fa3;font-size:13px;min-height:16px}
+#player{grid-column:1/3;background:#150f26;border-top:1px solid #ffffff14;display:grid;grid-template-columns:1fr 2fr 1fr;align-items:center;padding:0 18px;gap:14px}
+.np{display:flex;gap:12px;align-items:center;min-width:0}
+.np .meta{min-width:0}
+.np .meta b,.np .meta a{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctl{display:flex;flex-direction:column;gap:6px;align-items:center}
+.btns{display:flex;gap:14px;align-items:center}
+.btns .pl{width:42px;height:42px;background:#fff;color:#150a2b;border-radius:50%;display:grid;place-items:center;transition:.2s}
+.btns .pl:hover{transform:scale(1.1)}
+.btns .on{color:var(--ac)}
+.pr{display:flex;gap:10px;align-items:center;width:100%;color:var(--t2);font-size:12px}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:9px;background:linear-gradient(90deg,var(--ac) var(--v,0%),#ffffff2e var(--v,0%));flex:1;outline:0;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#fff}
+.vol{display:flex;gap:8px;align-items:center;justify-content:flex-end}
+.vol input{max-width:110px}
+dialog{margin:auto;border:0;border-radius:20px;background:var(--card);color:#fff;padding:24px;width:min(380px,92vw);box-shadow:0 30px 80px #000b}
+dialog::backdrop{background:#000a}
+dialog h3{margin-bottom:14px}
+dialog .btn{margin:6px 6px 0 0}
+.li{display:flex;gap:10px;width:100%;padding:10px;border-radius:10px;text-align:left}
+.li:hover{background:#ffffff14}
+#toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#fff;color:#150a2b;padding:10px 20px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:20}
+#toast.on{opacity:1}
+@media(max-width:900px){.row{grid-template-columns:28px 44px 1fr auto auto auto}.al{display:none}#player{grid-template-columns:1.2fr 1.6fr}.vol{display:none}.auth{grid-template-columns:1fr}.auth .art{display:none}}
+@media(max-width:760px){
+#app{grid-template-columns:1fr;grid-template-rows:1fr auto 58px}
+aside{grid-row:3;flex-direction:row;padding:4px 6px;justify-content:space-around;align-items:center;overflow:hidden}
+.logo,.sp,.mk{display:none}
+.nav{flex-direction:column;gap:2px;padding:6px 8px;font-size:10px;width:auto;text-align:center}
+.me{width:auto;padding:4px}.me span{display:none}
+#player{grid-column:1;grid-row:2;grid-template-columns:1fr;padding:8px 14px;gap:6px}
+.np{display:none}.np.has{display:flex}
+.pr{order:3}
+main{padding:0 16px 24px}
+.cv.big{width:140px;font-size:56px}
+.hero{padding:24px}.disc{width:200px;height:200px;right:-60px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside>
+    <div class="logo" id="logo"></div>
+    <button class="nav" data-go="#/home" data-r="home"></button>
+    <button class="nav" data-go="#/search" data-r="search"></button>
+    <button class="nav" data-go="#/library" data-r="library"></button>
+    <button class="nav" data-go="#/liked" data-r="liked"></button>
+    <button class="nav mk" data-act="newpl"></button>
+    <div class="sp"></div>
+    <button class="me" id="me" data-go="#/profile"></button>
+  </aside>
+  <main>
+    <div class="top">
+      <div class="sb"><span id="sbi"></span><input id="q" type="search" placeholder="Search songs, artists, albums…" aria-label="Search"></div>
+      <button class="ib" data-act="bell" id="bell" aria-label="Notifications"></button>
+      <button id="topav" data-go="#/profile" aria-label="Profile"></button>
+    </div>
+    <div id="view"></div>
+  </main>
+  <footer id="player">
+    <div class="np" id="np"></div>
+    <div class="ctl">
+      <div class="btns">
+        <button class="ib" id="bsh" aria-label="Shuffle"></button>
+        <button class="ib" id="bpv" aria-label="Previous"></button>
+        <button class="pl" id="bpl" aria-label="Play or pause"></button>
+        <button class="ib" id="bnx" aria-label="Next"></button>
+        <button class="ib" id="brp" aria-label="Repeat"></button>
+      </div>
+      <div class="pr"><span id="tc">0:00</span><input type="range" id="pg" min="0" max="1000" value="0" aria-label="Progress"><span id="td">0:00</span></div>
+    </div>
+    <div class="vol"><span id="vi"></span><input type="range" id="vl" min="0" max="100" value="70" aria-label="Volume"></div>
+  </footer>
+</div>
+<dialog id="dlg"></dialog>
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   FIREBASE CONFIG — ganti semua placeholder dengan konfigurasi project
+   Firebase milikmu (Firebase Console > Project settings > Your apps > Web).
+   Selama masih "YOUR_...", MOODIFY berjalan di MODE DEMO (data di localStorage).
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+/* ======================== DATA DEMO ======================== */
+/* Audio: SoundHelix (musik demo bebas royalti). Ganti URL di bawah dengan audio legal milikmu. */
+const AUDIO = n => `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${n}.mp3`;
+const AR = [ /* nama, pendengar bulanan, emoji, bio */
+  ["Luna Waves","12.3M","🌙","Produser lofi dari Bandung yang meramu ketukan hangat untuk belajar dan malam sunyi."],
+  ["Neon Drive","8.9M","🚗","Synthwave penuh lampu kota, dibuat untuk perjalanan malam."],
+  ["Midnight Atlas","5.1M","🗺️","Duo ambient yang memetakan mimpi lewat suara pad dan piano."],
+  ["Velvet Sky","9.4M","☁️","Penyanyi dream pop dengan vokal lembut dan melodi melayang."],
+  ["Chill Harbor","3.7M","⚓","Instrumen akustik santai dari tepi pelabuhan."],
+  ["Echo Bloom","6.6M","🌸","Elektronik yang cerah, ritmis, dan penuh energi."],
+  ["Golden Hour","7.2M","🌅","Indie pop hangat yang terasa seperti sore hari."],
+  ["Aurora Hex","4.8M","✨","Eksperimen suara futuristik untuk jam-jam larut."]
+];
+const MOODS = [["Chill","😌",265],["Focus","🎯",215],["Happy","😊",45],["Sad","🌧️",230],["Energy","⚡",320],["Night","🌙",250]];
+const SONGS = [ /* judul, id artis (juga id album), mood */
+  ["Snowfall Dreams",0,"Chill"],["Midnight Drive",1,"Night"],["Violet Skies",2,"Chill"],["Velvet Rain",3,"Sad"],
+  ["Harbor Lights",4,"Focus"],["Neon Heartbeat",5,"Energy"],["Golden Hour",6,"Happy"],["Static Love",1,"Energy"],
+  ["Deep Focus",0,"Focus"],["Afterglow",7,"Night"],["Bloom",5,"Happy"],["Paper Lanterns",3,"Sad"]
+];
+const ALB = ["Purple Hours","City Lights","Dreamscape","Night Bloom","Rainy Café","Static Hearts","Golden Dawn","Afterglow"];
+const hue = i => (i * 47 + 255) % 360;
+const songs = SONGS.map(([t,a,m],i) => ({id:i,t,a,m,url:AUDIO(i+1),h:hue(a),e:AR[a][2]}));
+const PL = [
+  ["Chill Vibes","For your relaxed mood","🌆",[0,2,4,8]],["Dreamy Pop","For your dreamy days","☁️",[3,6,10,11]],
+  ["Late Night","For your night vibes","🌌",[1,9,7,2]],["Focus Flow","For your productivity","🎯",[4,8,0,2]],
+  ["Lofi Study","Beats to study to","📚",[0,8,4,9]],["Happy Days","Good mood only","😊",[6,10,5,3]],
+  ["Workout Energy","Push harder","⚡",[5,7,1,10]],["Sad Hours","When it rains inside","🌧️",[11,3,2,9]]
+].map(([name,desc,e,ids],i) => ({id:"p"+i,name,desc,e,ids,h:hue(i+3)}));
+
+/* ======================== STATE ======================== */
+const $ = (s,r=document) => r.querySelector(s);
+const def = {liked:[],recent:[],pls:[],follow:[],user:null,tab:"Playlists",sf:"All",auto:true};
+let S = Object.assign({}, def, JSON.parse(localStorage.getItem("moodify") || "{}"));
+let FB = null;
+function save(){ localStorage.setItem("moodify", JSON.stringify(S)); cloudSave(); }
+
+/* ======================== UI HELPERS ======================== */
+const P = {
+  home:"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
+  search:"M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M21 21l-4.35-4.35",
+  lib:"M4 4v16 M9 4v16 M14 6l5 14",
+  heart:"M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z",
+  plus:"M12 5v14 M5 12h14", x:"M18 6L6 18 M6 6l12 12",
+  play:"M6 4l14 8-14 8z", pause:"M6 4h4v16H6z M14 4h4v16h-4z",
+  next:"M5 4l10 8-10 8z M19 5v14", prev:"M19 4L9 12l10 8z M5 5v14",
+  shuf:"M16 3h5v5 M4 20L21 3 M21 16v5h-5 M15 15l6 6 M4 4l5 5",
+  rep:"M17 1l4 4-4 4 M3 11V9a4 4 0 0 1 4-4h14 M7 23l-4-4 4-4 M21 13v2a4 4 0 0 1-4 4H3",
+  vol:"M11 5L6 9H2v6h4l5 4z M15.5 8.5a5 5 0 0 1 0 7", mute:"M11 5L6 9H2v6h4l5 4z M22 9l-6 6 M16 9l6 6",
+  bell:"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9 M13.7 21a2 2 0 0 1-3.4 0",
+  head:"M3 18v-6a9 9 0 0 1 18 0v6 M21 19a2 2 0 0 1-2 2h-1v-6h3z M3 19a2 2 0 0 0 2 2h1v-6H3z",
+  trash:"M3 6h18 M8 6V4h8v2 M6 6l1 14h10l1-14", user:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"
+};
+const FILLED = {play:1,pause:1,next:1,prev:1};
+const ic = (n,fill) => `<svg class="ic" viewBox="0 0 24 24" fill="${fill||FILLED[n]?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${P[n]}"/></svg>`;
+const cover = (h,e,c="") => `<div class="cv ${c}" style="background:linear-gradient(135deg,hsl(${h} 75% 60%),hsl(${(h+40)%360} 65% 22%))"><span>${e}</span></div>`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = t => isFinite(t) ? Math.floor(t/60) + ":" + String(Math.floor(t%60)).padStart(2,"0") : "0:00";
+const avatar = (sz) => S.user && S.user.photo
+  ? `<img class="av" style="width:${sz}px;height:${sz}px" src="${S.user.photo}" alt="">`
+  : `<div class="av" style="width:${sz}px;height:${sz}px;font-size:${sz*.42}px">${S.user ? esc(S.user.name[0].toUpperCase()) : ic("user")}</div>`;
+let tt;
+function toast(m){ const t = $("#toast"); t.textContent = m; t.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("on"), 2400); }
+const getPl = id => PL.concat(S.pls).find(p => p.id === id);
+const isLiked = id => S.liked.includes(id);
+const plHue = id => [...id].reduce((a,c) => a + c.charCodeAt(0), 0) % 360;
+
+/* ======================== PLAYER ======================== */
+const au = new Audio();
+let Q = [], qi = 0, shuffle = false, repeat = 0, drag = false;
+const cur = () => Q.length ? songs[Q[qi]] : null;
+au.volume = .7;
+
+function play(ids, i){ Q = ids; qi = i; load(); }
+function load(){
+  const s = cur(); if(!s) return;
+  au.src = s.url;
+  au.play().catch(() => toast("Audio tidak bisa diputar. Periksa koneksi internet."));
+  S.recent = [s.id].concat(S.recent.filter(x => x !== s.id)).slice(0,12);
+  save(); ui();
+}
+function toggle(){
+  if(!cur()){ play(songs.map(s => s.id), 0); return; }
+  au.paused ? au.play() : au.pause();
+}
+function next(auto){
+  if(!Q.length) return;
+  if(auto && repeat === 2){ au.currentTime = 0; au.play(); return; }
+  if(shuffle && Q.length > 1){ let n; do { n = Math.floor(Math.random()*Q.length); } while(n === qi); qi = n; }
+  else if(qi < Q.length - 1) qi++;
+  else if(repeat === 1 || !auto) qi = 0;
+  else { au.pause(); au.currentTime = 0; ui(); return; }
+  load();
+}
+function prev(){
+  if(!Q.length) return;
+  if(au.currentTime > 3){ au.currentTime = 0; return; }
+  qi = qi > 0 ? qi - 1 : Q.length - 1; load();
+}
+function ui(){
+  const s = cur(), np = $("#np");
+  np.classList.toggle("has", !!s);
+  np.innerHTML = s
+    ? `<div style="width:56px">${cover(s.h,s.e,"sm")}</div><div class="meta"><b>${esc(s.t)}</b><a data-go="#/artist/${s.a}">${AR[s.a][0]}</a></div><button class="ib ${isLiked(s.id)?'lk':''}" data-act="like" data-id="${s.id}" aria-label="Like">${ic("heart",isLiked(s.id))}</button>`
+    : `<div class="meta"><b>Belum ada lagu</b><span class="t2">Pilih lagu untuk mulai</span></div>`;
+  if(s){ $("#np div").style.width = "44px"; }
+  $("#bpl").innerHTML = ic(!au.paused && s ? "pause" : "play");
+  $("#bsh").classList.toggle("on", shuffle);
+  $("#brp").classList.toggle("on", repeat > 0);
+  $("#brp").title = ["Repeat off","Repeat all","Repeat one"][repeat];
+  document.querySelectorAll(".row").forEach(r => r.classList.toggle("on", !!s && +r.dataset.id === s.id));
+  document.title = s ? `${s.t} · MOODIFY` : "MOODIFY — Your Mood, Your Music.";
+}
+au.addEventListener("play", ui); au.addEventListener("pause", ui);
+au.addEventListener("ended", () => S.auto ? next(true) : ui());
+au.addEventListener("timeupdate", () => {
+  if(drag || !au.duration) return;
+  $("#pg").value = au.currentTime / au.duration * 1000;
+  $("#pg").style.setProperty("--v", au.currentTime / au.duration * 100 + "%");
+  $("#tc").textContent = fmt(au.currentTime);
+});
+au.addEventListener("loadedmetadata", () => $("#td").textContent = fmt(au.duration));
+function setVol(v){
+  au.volume = v / 100; $("#vl").value = v; $("#vl").style.setProperty("--v", v + "%");
+  $("#vi").innerHTML = `<button class="ib" id="mute" aria-label="Mute">${ic(v > 0 ? "vol" : "mute")}</button>`;
+}
+let lastVol = 70;
+$("#pg").addEventListener("input", e => { drag = true; if(au.duration){ const t = e.target.value/1000*au.duration; $("#tc").textContent = fmt(t); e.target.style.setProperty("--v", e.target.value/10 + "%"); } });
+$("#pg").addEventListener("change", e => { if(au.duration) au.currentTime = e.target.value/1000*au.duration; drag = false; });
+$("#vl").addEventListener("input", e => { lastVol = +e.target.value || lastVol; setVol(+e.target.value); });
+$("#vi").addEventListener("click", () => setVol(au.volume > 0 ? 0 : lastVol));
+$("#bpl").onclick = toggle; $("#bnx").onclick = () => next(false); $("#bpv").onclick = prev;
+$("#bsh").onclick = () => { shuffle = !shuffle; ui(); toast(shuffle ? "Shuffle on" : "Shuffle off"); };
+$("#brp").onclick = () => { repeat = (repeat + 1) % 3; ui(); toast(["Repeat off","Repeat all","Repeat one"][repeat]); };
+document.addEventListener("keydown", e => {
+  if(e.code === "Space" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName) && !$("#dlg").open){ e.preventDefault(); toggle(); }
+});
+
+/* ======================== COMPONENTS ======================== */
+const card = (cv, title, sub, go, ids, cls="") =>
+  `<div class="card ${cls}" data-go="${go}" tabindex="0">${cv}<b>${esc(title)}</b><small>${esc(sub)}</small>${ids ? `<span class="fab" data-q="${ids.join(",")}" data-i="0" role="button" aria-label="Play">${ic("play")}</span>` : ""}</div>`;
+const plCard = p => card(cover(p.h,p.e), p.name, p.desc || `${p.ids.length} songs`, "#/playlist/" + p.id, p.ids);
+const albCard = i => card(cover(hue(i),AR[i][2]), ALB[i], AR[i][0] + " · Album", "#/album/" + i, songs.filter(s => s.a === i).map(s => s.id));
+const arCard = i => card(cover(hue(i),AR[i][2]), AR[i][0], "Artist", "#/artist/" + i, null, "rd");
+const songCard = s => card(cover(s.h,s.e), s.t, AR[s.a][0], "#/album/" + s.a, null).replace('data-go="#/album/' + s.a + '"', `data-q="${s.id}" data-i="0"`);
+const sec = (t, body, more) => `<section class="sec"><div class="sh"><h2>${t}</h2>${more ? `<a data-go="${more}">See all</a>` : ""}</div>${body}</section>`;
+const row = (s, i, q, rm) => {
+  const l = isLiked(s.id);
+  return `<div class="row ${cur() && cur().id === s.id ? "on" : ""}" data-id="${s.id}" data-q="${q}" data-i="${i}">
+    <span class="n">${i+1}</span>${cover(s.h,s.e,"sm")}
+    <div class="meta"><b>${esc(s.t)}</b><a data-go="#/artist/${s.a}">${AR[s.a][0]}</a></div>
+    <span class="al">${ALB[s.a]} · ${s.m}</span>
+    <button class="ib ${l ? "lk" : ""}" data-act="like" data-id="${s.id}" aria-label="Like">${ic("heart",l)}</button>
+    <button class="ib" data-act="add" data-id="${s.id}" aria-label="Add to playlist">${ic("plus")}</button>
+    ${rm ? `<button class="ib" data-act="rm" data-pl="${rm}" data-id="${s.id}" aria-label="Remove">${ic("x")}</button>` : "<span></span>"}
+  </div>`;
+};
+const list = (ids, rm) => ids.length ? ids.map((id,i) => row(songs[id], i, ids.join(","), rm)).join("") : "";
+
+function detail(o){
+  const ids = o.ids, q = ids.join(","), mine = o.pl && o.pl.id[0] === "u";
+  return `<div class="dh">${cover(o.h,o.e,"big")}<div><small>${o.kind}</small><h1>${esc(o.title)}</h1><p class="t2">${esc(o.desc)} · ${ids.length} songs</p></div></div>
+  <div class="acts">
+    ${ids.length ? `<button class="pb" data-q="${q}" data-i="0" aria-label="Play all">${ic("play")}</button><button class="btn g" data-q="${q}" data-sh="1">${ic("shuf")} Shuffle</button>` : ""}
+    ${mine ? `<button class="btn g" data-act="renpl" data-id="${o.pl.id}">Rename</button><button class="btn g" data-act="delpl" data-id="${o.pl.id}">${ic("trash")} Delete</button>` : ""}
+  </div>
+  ${ids.length ? list(ids, mine ? o.pl.id : "") : `<div class="empty">Playlist ini masih kosong. Tekan tombol + pada lagu mana pun untuk menambahkannya di sini.</div>`}`;
+}
+
+/* ======================== PAGES ======================== */
+const pages = {
+  home(){
+    const h = new Date().getHours(), g = h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+    const name = S.user ? S.user.name : "Music lover";
+    const trend = [6,0,1,5,3,9];
+    return `<div class="hero"><div class="disc"></div><h1>${g},<br>${esc(name)}!</h1><p>Your Mood, Your Music.</p>
+      <button class="btn" data-q="${songs.map(s=>s.id).join(",")}" data-i="0">${ic("play")} Play Now</button></div>
+    ${S.recent.length ? sec("Recently Played", `<div class="grid">${S.recent.slice(0,6).map(i => songCard(songs[i])).join("")}</div>`) : ""}
+    ${sec("Made For You", `<div class="grid">${PL.slice(0,4).map(plCard).join("")}</div>`, "#/library")}
+    ${sec("Popular Albums", `<div class="grid">${[0,1,2,3,4,5].map(albCard).join("")}</div>`, "#/library")}
+    ${sec("Trending Songs", list(trend))}
+    ${sec("Recommended Playlists", `<div class="grid">${PL.slice(4).map(plCard).join("")}</div>`, "#/library")}
+    ${sec("Music by Mood", `<div class="grid">${MOODS.map(([m,e,hh]) => `<button class="mood" data-go="#/mood/${m}" style="background:linear-gradient(135deg,hsl(${hh} 70% 55%),hsl(${hh+40} 60% 25%))"><span>${e}</span>${m}</button>`).join("")}</div>`)}`;
+  },
+  search(){
+    const q = $("#q").value.trim().toLowerCase(), f = S.sf;
+    const chips = `<div class="chips">${["All","Songs","Albums","Artists","Playlists"].map(c => `<button class="chip ${f===c?"on":""}" data-act="sf" data-v="${c}">${c}</button>`).join("")}</div>`;
+    if(!q) return `<h1 style="margin:10px 0 18px">Search</h1>${chips}${sec("Browse by mood", `<div class="grid">${MOODS.map(([m,e,hh]) => `<button class="mood" data-go="#/mood/${m}" style="background:linear-gradient(135deg,hsl(${hh} 70% 55%),hsl(${hh+40} 60% 25%))"><span>${e}</span>${m}</button>`).join("")}</div>`)}`;
+    const m = s => s.toLowerCase().includes(q);
+    const rs = songs.filter(s => m(s.t) || m(AR[s.a][0]) || m(s.m) || m(ALB[s.a])).map(s => s.id);
+    const ars = AR.map((a,i) => i).filter(i => m(AR[i][0]));
+    const als = ALB.map((a,i) => i).filter(i => m(ALB[i]) || m(AR[i][0]));
+    const pls = PL.concat(S.pls).filter(p => m(p.name) || (p.desc && m(p.desc)));
+    const show = k => f === "All" || f === k;
+    let out = chips;
+    if(show("Songs") && rs.length) out += sec("Songs", list(rs));
+    if(show("Artists") && ars.length) out += sec("Artists", `<div class="grid">${ars.map(arCard).join("")}</div>`);
+    if(show("Albums") && als.length) out += sec("Albums", `<div class="grid">${als.map(albCard).join("")}</div>`);
+    if(show("Playlists") && pls.length) out += sec("Playlists", `<div class="grid">${pls.map(plCard).join("")}</div>`);
+    return out === chips ? chips + `<div class="empty">Tidak ada hasil untuk "${esc(q)}". Coba kata kunci lain, misalnya "lofi", "night", atau nama artis.</div>` : out;
+  },
+  library(){
+    const t = S.tab;
+    const tabs = `<div class="chips">${["Playlists","Albums","Artists"].map(c => `<button class="chip ${t===c?"on":""}" data-act="tab" data-v="${c}">${c}</button>`).join("")}</div>`;
+    let body;
+    if(t === "Playlists") body = `<div class="grid"><button class="card" data-act="newpl"><div class="cv" style="background:#ffffff12">${ic("plus")}</div><b>Create Playlist</b><small>Buat playlist baru</small></button>
+      ${card(cover(270,"💜"), "Liked Songs", S.liked.length + " songs", "#/liked", S.liked.length ? S.liked : null)}
+      ${S.pls.map(plCard).join("")}${PL.map(plCard).join("")}</div>`;
+    else if(t === "Albums") body = `<div class="grid">${ALB.map((a,i) => albCard(i)).join("")}</div>`;
+    else body = `<div class="grid">${AR.map((a,i) => arCard(i)).join("")}</div>`;
+    return `<h1 style="margin:10px 0 18px">Your Library</h1>${tabs}${body}`;
+  },
+  liked(){ return detail({kind:"Playlist",title:"Liked Songs",desc:"Lagu favoritmu",h:270,e:"💜",ids:S.liked}); },
+  playlist(id){
+    const p = getPl(id); if(!p) return `<div class="empty">Playlist tidak ditemukan.</div>`;
+    return detail({kind:"Playlist",title:p.name,desc:p.desc || "Playlist buatanmu",h:p.h ?? plHue(p.id),e:p.e || "🎵",ids:p.ids,pl:p});
+  },
+  album(i){
+    i = +i; if(!AR[i]) return `<div class="empty">Album tidak ditemukan.</div>`;
+    return detail({kind:"Album",title:ALB[i],desc:AR[i][0],h:hue(i),e:AR[i][2],ids:songs.filter(s => s.a === i).map(s => s.id)});
+  },
+  mood(m){
+    const d = MOODS.find(x => x[0] === m); if(!d) return `<div class="empty">Mood tidak ditemukan.</div>`;
+    return detail({kind:"Mood",title:m,desc:"Lagu untuk suasana hatimu",h:d[2],e:d[1],ids:songs.filter(s => s.m === m).map(s => s.id)});
+  },
+  artist(i){
+    i = +i; const a = AR[i]; if(!a) return `<div class="empty">Artis tidak ditemukan.</div>`;
+    const ids = songs.filter(s => s.a === i).map(s => s.id), fl = S.follow.includes(i);
+    return `<div class="dh"><div style="width:200px">${cover(hue(i),a[2],"big").replace("border-radius","border-radius")}</div><div><small>✔ Verified Artist</small><h1>${a[0]}</h1><p class="t2">${a[1]} monthly listeners</p></div></div>
+    <div class="acts"><button class="pb" data-q="${ids.join(",")}" data-i="0" aria-label="Play">${ic("play")}</button><button class="btn g" data-act="follow" data-id="${i}">${fl ? "Following" : "Follow"}</button></div>
+    ${sec("Popular", list(ids))}${sec("Albums", `<div class="grid">${albCard(i)}</div>`)}
+    ${sec("About", `<div class="panel"><p>${a[3]}</p></div>`)}`;
+  },
+  profile(){
+    if(!S.user) return `<div class="empty">Kamu belum login.<br><br><button class="btn" data-go="#/login">Login</button> <button class="btn g" data-go="#/register">Register</button></div>`;
+    return `<div class="dh">${avatar(180)}<div><small>Profile</small><h1>${esc(S.user.name)}</h1><p class="t2">${esc(S.user.email)}</p></div></div>
+    <div class="panel"><div class="stats"><div><b>${S.pls.length}</b><span class="t2">Playlists</span></div><div><b>${S.liked.length}</b><span class="t2">Liked Songs</span></div><div><b>${S.follow.length}</b><span class="t2">Following</span></div></div>
+    <div class="acts"><button class="btn" data-act="rename">Edit Profile</button><label class="btn g" style="cursor:pointer">Upload photo<input type="file" id="pic" accept="image/*" hidden></label><button class="btn g" data-act="logout">Logout</button></div></div>
+    ${sec("Settings", `<div class="panel"><label style="display:flex;gap:10px;align-items:center;cursor:pointer"><input type="checkbox" data-act="auto" ${S.auto ? "checked" : ""}> Putar lagu berikutnya otomatis</label><div class="acts" style="margin-top:14px"><button class="btn g" data-act="clrec">Hapus recently played</button><button class="btn g" data-act="reset">Reset data demo</button></div></div>`)}
+    ${S.recent.length ? sec("Recently Played", `<div class="grid">${S.recent.slice(0,6).map(i => songCard(songs[i])).join("")}</div>`) : ""}`;
+  },
+  login(){ return authView("Login"); },
+  register(){ return authView("Register"); }
+};
+function authView(mode){
+  const reg = mode === "Register";
+  return `<div class="auth"><div class="art">${ic("head")}<p>Welcome to</p><h1 style="font-size:34px">MOODIFY</h1><p class="t2">Your Mood, Your Music.</p></div>
+  <div class="fm"><h2>${reg ? "Create account" : "Login"}</h2>
+    ${reg ? `<input id="au" placeholder="Username" autocomplete="username">` : ""}
+    <input id="ae" type="email" placeholder="Email address" autocomplete="email">
+    <input id="ap" type="password" placeholder="Password (min. 6 karakter)" autocomplete="${reg ? "new-password" : "current-password"}">
+    <div class="err" id="er"></div>
+    <button class="btn" style="justify-content:center" data-act="${reg ? "doreg" : "dolog"}">${reg ? "Register" : "Login"}</button>
+    <p class="t2">${reg ? "Sudah punya akun?" : "Belum punya akun?"} <a data-go="#/${reg ? "login" : "register"}" style="color:var(--ac)">${reg ? "Login" : "Register"}</a></p>
+    ${FB ? "" : `<p class="t2" style="font-size:12px">Mode demo: akun disimpan di browser ini. Isi FIREBASE_CONFIG untuk login sungguhan.</p>`}
+  </div></div>`;
+}
+
+/* ======================== ROUTER ======================== */
+function route(keep){
+  const [p,a] = location.hash.slice(2).split("/");
+  const name = p || "home", pg = pages[name] || pages.home;
+  const top = $("main").scrollTop;
+  $("#view").innerHTML = pg(decodeURIComponent(a || ""));
+  $("main").scrollTop = keep ? top : 0;
+  const map = {playlist:"library",album:"library",artist:"library",mood:"home"};
+  document.querySelectorAll("aside .nav[data-r]").forEach(n => n.classList.toggle("on", n.dataset.r === (map[name] || name)));
+  ui();
+}
+window.addEventListener("hashchange", () => route());
+$("#q").addEventListener("input", () => { if(location.hash !== "#/search") location.hash = "#/search"; else route(true); });
+
+/* ======================== DIALOGS ======================== */
+const dlg = $("#dlg");
+let askCb = null, pendingSong = null;
+function ask(title, val, cb){
+  askCb = cb;
+  dlg.innerHTML = `<h3>${title}</h3><input class="tx" id="askv" value="${esc(val)}" maxlength="40"><div style="margin-top:12px"><button class="btn" data-act="askok">Save</button><button class="btn g" data-act="close">Cancel</button></div>`;
+  dlg.showModal(); setTimeout(() => $("#askv").select(), 30);
+}
+dlg.addEventListener("click", e => { if(e.target === dlg) dlg.close(); });
+function newPlaylist(songId){
+  ask("Create playlist", "My Playlist #" + (S.pls.length + 1), name => {
+    const p = {id:"u" + Date.now(), name, desc:"", ids: songId != null ? [songId] : []};
+    S.pls.unshift(p); save(); toast("Playlist dibuat");
+    location.hash = "#/playlist/" + p.id;
+  });
+}
+
+/* ======================== EVENTS ======================== */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act],[data-go],[data-q]"); if(!el) return;
+  const d = el.dataset;
+  if(d.act){ act(d.act, d, el); return; }
+  if(d.go){ location.hash = d.go; return; }
+  if(d.q){
+    const ids = d.q.split(",").map(Number);
+    if(d.sh){ shuffle = true; play(ids, Math.floor(Math.random() * ids.length)); }
+    else play(ids, +d.i || 0);
+  }
+});
+document.addEventListener("keydown", e => {
+  if(e.key === "Enter" && e.target.classList.contains("card")) e.target.click();
+  if(e.key === "Enter" && e.target.id === "askv") $('[data-act="askok"]').click();
+});
+document.addEventListener("change", e => {
+  if(e.target.id === "pic") uploadPic(e.target.files[0]);
+  if(e.target.dataset.act === "auto"){ S.auto = e.target.checked; save(); }
+});
+
+function act(a, d){
+  const id = d.id;
+  switch(a){
+    case "like": {
+      const n = +id, had = isLiked(n);
+      S.liked = had ? S.liked.filter(x => x !== n) : S.liked.concat(n);
+      save(); toast(had ? "Dihapus dari Liked Songs" : "Ditambahkan ke Liked Songs");
+      if(location.hash === "#/liked") route(true);
+      else document.querySelectorAll(`[data-act="like"][data-id="${n}"]`).forEach(b => { b.classList.toggle("lk", !had); b.innerHTML = ic("heart", !had); });
+      break;
+    }
+    case "add": {
+      const n = +id; pendingSong = n;
+      dlg.innerHTML = `<h3>Add to playlist</h3><button class="li" data-act="mkadd">${ic("plus")} New playlist</button>${S.pls.length ? S.pls.map(p => `<button class="li" data-act="addto" data-pl="${p.id}">${ic("lib")} ${esc(p.name)}</button>`).join("") : `<p class="t2">Kamu belum punya playlist.</p>`}<button class="btn g" data-act="close">Close</button>`;
+      dlg.showModal(); break;
+    }
+    case "mkadd": dlg.close(); newPlaylist(pendingSong); break;
+    case "addto": {
+      const p = S.pls.find(x => x.id === d.pl);
+      if(p.ids.includes(pendingSong)) toast("Lagu sudah ada di playlist");
+      else { p.ids.push(pendingSong); save(); toast("Ditambahkan ke " + p.name); }
+      dlg.close(); if(location.hash.includes(p.id)) route(true); break;
+    }
+    case "rm": { const p = S.pls.find(x => x.id === d.pl); p.ids = p.ids.filter(x => x !== +id); save(); route(true); toast("Lagu dihapus dari playlist"); break; }
+    case "newpl": newPlaylist(); break;
+    case "renpl": { const p = S.pls.find(x => x.id === id); ask("Rename playlist", p.name, v => { p.name = v; save(); route(true); }); break; }
+    case "delpl": if(confirm("Hapus playlist ini?")){ S.pls = S.pls.filter(x => x.id !== id); save(); location.hash = "#/library"; toast("Playlist dihapus"); } break;
+    case "askok": { const v = $("#askv").value.trim(); if(!v){ toast("Nama tidak boleh kosong"); return; } dlg.close(); askCb && askCb(v); break; }
+    case "close": dlg.close(); break;
+    case "tab": S.tab = d.v; save(); route(true); break;
+    case "sf": S.sf = d.v; save(); route(true); break;
+    case "follow": { const n = +id; S.follow = S.follow.includes(n) ? S.follow.filter(x => x !== n) : S.follow.concat(n); save(); route(true); break; }
+    case "bell": toast("Tidak ada notifikasi baru"); break;
+    case "rename": ask("Edit username", S.user.name, v => { S.user.name = v; if(FB && S.user.uid) FB.A.updateProfile(FB.auth.currentUser, {displayName:v}); save(); renderUser(); route(true); }); break;
+    case "clrec": S.recent = []; save(); route(true); toast("Recently played dihapus"); break;
+    case "reset": if(confirm("Reset semua data demo di browser ini?")){ localStorage.removeItem("moodify"); location.hash = "#/home"; location.reload(); } break;
+    case "logout": doLogout(); break;
+    case "dolog": doLogin(); break;
+    case "doreg": doRegister(); break;
+  }
+}
+
+/* ======================== AUTH + FIREBASE ======================== */
+function renderUser(){
+  $("#me").innerHTML = `${avatar(34)}<span>${S.user ? esc(S.user.name) : "Login"}</span>`;
+  $("#me").dataset.go = S.user ? "#/profile" : "#/login";
+  $("#topav").innerHTML = avatar(36);
+  $("#topav").dataset.go = S.user ? "#/profile" : "#/login";
+}
+const setErr = m => { const e = $("#er"); if(e) e.textContent = m; };
+async function doLogin(){
+  const em = $("#ae").value.trim(), pw = $("#ap").value;
+  if(!/^\S+@\S+\.\S+$/.test(em)) return setErr("Masukkan email yang valid.");
+  if(pw.length < 6) return setErr("Password minimal 6 karakter.");
+  try{
+    if(FB) await FB.A.signInWithEmailAndPassword(FB.auth, em, pw);
+    else S.user = {name: em.split("@")[0], email: em, photo: (S.user && S.user.photo) || ""};
+    save(); renderUser(); location.hash = "#/home"; toast("Selamat datang kembali!");
+  }catch(e){ setErr("Login gagal: " + e.code); }
+}
+async function doRegister(){
+  const un = $("#au").value.trim(), em = $("#ae").value.trim(), pw = $("#ap").value;
+  if(un.length < 2) return setErr("Username minimal 2 karakter.");
+  if(!/^\S+@\S+\.\S+$/.test(em)) return setErr("Masukkan email yang valid.");
+  if(pw.length < 6) return setErr("Password minimal 6 karakter.");
+  try{
+    if(FB){
+      const c = await FB.A.createUserWithEmailAndPassword(FB.auth, em, pw);
+      await FB.A.updateProfile(c.user, {displayName: un});
+      S.user = {uid:c.user.uid, name:un, email:em, photo:""}; await cloudSave(true);
+    } else S.user = {name:un, email:em, photo:""};
+    save(); renderUser(); location.hash = "#/home"; toast("Akun berhasil dibuat");
+  }catch(e){ setErr("Register gagal: " + e.code); }
+}
+async function doLogout(){
+  if(FB) await FB.A.signOut(FB.auth);
+  S.user = null; S.liked = []; S.recent = []; S.pls = []; S.follow = []; save(); renderUser();
+  location.hash = "#/login"; toast("Kamu sudah logout");
+}
+async function cloudSave(force){
+  if(!FB || !S.user || !S.user.uid) return;
+  try{
+    await FB.F.setDoc(FB.F.doc(FB.db, "users", S.user.uid),
+      {name:S.user.name, email:S.user.email, photo:S.user.photo || "", liked:S.liked, recent:S.recent, playlists:S.pls, follow:S.follow}, {merge:true});
+  }catch(e){ console.error("Firestore:", e); }
+}
+async function uploadPic(file){
+  if(!file) return;
+  try{
+    const bmp = await createImageBitmap(file), c = document.createElement("canvas"); c.width = c.height = 256;
+    const s = Math.min(bmp.width, bmp.height);
+    c.getContext("2d").drawImage(bmp, (bmp.width-s)/2, (bmp.height-s)/2, s, s, 0, 0, 256, 256);
+    if(FB && S.user.uid){
+      const blob = await new Promise(r => c.toBlob(r, "image/jpeg", .85));
+      const ref = FB.St.ref(FB.st, `avatars/${S.user.uid}.jpg`);
+      await FB.St.uploadBytes(ref, blob);
+      S.user.photo = await FB.St.getDownloadURL(ref);
+    } else S.user.photo = c.toDataURL("image/jpeg", .8);
+    save(); renderUser(); route(true); toast("Foto profil diperbarui");
+  }catch(e){ toast("Gagal mengunggah foto"); console.error(e); }
+}
+async function initFirebase(){
+  if(FIREBASE_CONFIG.apiKey.startsWith("YOUR_")) return;
+  try{
+    const v = "https://www.gstatic.com/firebasejs/10.12.2/";
+    const [app, A, F, St] = await Promise.all([import(v+"firebase-app.js"), import(v+"firebase-auth.js"), import(v+"firebase-firestore.js"), import(v+"firebase-storage.js")]);
+    const a = app.initializeApp(FIREBASE_CONFIG);
+    FB = {A, F, St, auth:A.getAuth(a), db:F.getFirestore(a), st:St.getStorage(a)};
+    A.onAuthStateChanged(FB.auth, async u => {
+      if(u){
+        const snap = await F.getDoc(F.doc(FB.db, "users", u.uid));
+        const x = snap.exists() ? snap.data() : {};
+        S.liked = x.liked || S.liked; S.recent = x.recent || S.recent; S.pls = x.playlists || S.pls; S.follow = x.follow || S.follow;
+        S.user = {uid:u.uid, name:u.displayName || u.email.split("@")[0], email:u.email, photo:x.photo || u.photoURL || ""};
+        localStorage.setItem("moodify", JSON.stringify(S));
+      } else if(S.user && S.user.uid){ S.user = null; }
+      renderUser(); route(true);
+    });
+  }catch(e){ console.error(e); toast("Firebase gagal dimuat. Memakai mode demo."); }
+}
+
+/* ======================== INIT ======================== */
+$("#logo").innerHTML = ic("head") + "MOODIFY";
+const navs = [["home","Home"],["search","Search"],["lib","Your Library"],["heart","Liked Songs"]];
+document.querySelectorAll("aside .nav[data-r]").forEach((n,i) => n.innerHTML = ic(navs[i][0]) + `<span>${navs[i][1]}</span>`);
+$(".nav.mk").innerHTML = ic("plus") + "<span>Create Playlist</span>";
+$("#sbi").innerHTML = ic("search"); $("#bell").innerHTML = ic("bell");
+$("#bsh").innerHTML = ic("shuf"); $("#bpv").innerHTML = ic("prev"); $("#bnx").innerHTML = ic("next"); $("#brp").innerHTML = ic("rep");
+setVol(70); renderUser();
+if(!location.hash) location.hash = "#/home"; else route();
+initFirebase();
+</script>
+</body>
+</html>
